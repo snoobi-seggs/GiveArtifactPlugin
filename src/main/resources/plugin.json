@@ -1,0 +1,12 @@
+{
+  "name": "GiveArtifactSnoo",
+  "description": "A simple command plugins that simplifies the shit artifact giving system in GC",
+  "version": "1.3.1",
+  "authors": [ "snoobiXorange" ],
+  
+  "mainClass": "snoobi.bignose.GiveArtifactSnoo",
+  
+  "comments": [
+    "ew kira is cringe"
+  ]
+}

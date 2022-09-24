@@ -17,9 +17,7 @@ import java.util.*;
 import static java.util.Map.entry;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 
-import static emu.grasscutter.utils.Language.translate;
-
-@Command(label = "giveart", usage = "/ga <artifactId> [<mainstatName>] [<substatName>=<substatvalue(in % or flat)>] [<level 1 - 21>]\n\nmainstatNames:\n    [hp,hp%,atk,atk%,def%,er,em,hb,cdmg,cr,phys%,dendro%,geo%,hydro%,anemo%,cryo%,electro%,pyro%]\n\nsubstatnames:\n[cdr,def,same as the ones above,speed(doesnt work)]", aliases = {"ga","giveartifact","gart"}, permission = "player.giveart", permissionTargeted = "player.giveart.others", targetRequirement = Command.TargetRequirement.NONE)
+@Command(label = "giveart", usage = "/ga <artifactId> [<mainstatName>] [<substatName>=<substatvalue(in % or flat)>] [<level 1 - 21>]\n\nmainstatNames:\n    [hp,hp%,atk,atk%,def,def%,er,em,hb,cdmg,cr,phys,dendro,geo,hydro,anemo,cryo,electro,pyro]\n\nsubstatnames:\n[cdr,same as the ones above,speed,dmg,sb]", aliases = {"ga","giveartifact","gart"}, permission = "player.giveart", permissionTargeted = "player.giveart.others", targetRequirement = Command.TargetRequirement.NONE)
 public final class GiveArtCommand implements CommandHandler {
 	
 	//maps substat actual names to maps of id and substatvalue
@@ -47,7 +45,7 @@ public final class GiveArtCommand implements CommandHandler {
 		entry("defencepercentage","FIGHT_PROP_DEFENSE_PERCENT"),
 		entry("er", "FIGHT_PROP_CHARGE_EFFICIENCY"),
 		entry("energyrecharge","FIGHT_PROP_CHARGE_EFFICIENCY"),
-		entry("em", "FIGHT_PROP_ELEMENTAL_MASTERY"),
+		entry("em", "FIGHT_PROP_ELEMENT_MASTERY"),
 		entry("elementalmastery","FIGHT_PROP_ELEMENTAL_MASTERY"),
 		entry("cr", "FIGHT_PROP_CRITICAL"),
 		entry("crate","FIGHT_PROP_CRITICAL"),
@@ -58,20 +56,29 @@ public final class GiveArtCommand implements CommandHandler {
 		entry("critdamage","FIGHT_PROP_CRITICAL_HURT"),
 		entry("criticaldmg","FIGHT_PROP_CRITICAL_HURT"),
 		entry("criticaldamage","FIGHT_PROP_CRITICAL_HURT"),
+		entry("cd","FIGHT_PROP_CRITICAL_HURT"),
 		entry("cdr","FIGHT_PROP_SKILL_CD_MINUS_RATIO"),
 		entry("cdreduction","FIGHT_PROP_SKILL_CD_MINUS_RATIO"),
 		entry("cooldownreduction","FIGHT_PROP_SKILL_CD_MINUS_RATIO"),
-		entry("cd","FIGHT_PROP_SKILL_CD_MINUS_RATIO"),
-		entry("phys%","FIGHT_PROP_PHYSICAL_ADD_HURT"),
-		entry("dendro%","FIGHT_PROP_GRASS_ADD_HURT"),
-		entry("geo%","FIGHT_PROP_ROCK_ADD_HURT"),
-		entry("anemo%","FIGHT_PROP_WIND_ADD_HURT"),
-		entry("hydro%","FIGHT_PROP_WATER_ADD_HURT"),
-		entry("cryo%","FIGHT_PROP_ICE_ADD_HURT"),
-		entry("electro%","FIGHT_PROP_ELEC_ADD_HURT"),
-		entry("pyro%","FIGHT_PROP_FIRE_ADD_HURT"),
+		entry("phys","FIGHT_PROP_PHYSICAL_ADD_HURT"),
+		entry("dendro","FIGHT_PROP_GRASS_ADD_HURT"),
+		entry("geo","FIGHT_PROP_ROCK_ADD_HURT"),
+		entry("anemo","FIGHT_PROP_WIND_ADD_HURT"),
+		entry("hydro","FIGHT_PROP_WATER_ADD_HURT"),
+		entry("cryo","FIGHT_PROP_ICE_ADD_HURT"),
+		entry("electro","FIGHT_PROP_ELEC_ADD_HURT"),
+		entry("pyro","FIGHT_PROP_FIRE_ADD_HURT"),
 		entry("hb","FIGHT_PROP_HEAL_ADD"),
-		entry("speed","FIGHT_PROP_SPEED_PERCENT")
+		entry("speed","FIGHT_PROP_SPEED_PERCENT"),
+		entry("sb","FIGHT_PROP_SHIELD_COST_MINUS_RATIO"),
+		entry("shieldbonus","FIGHT_PROP_SHIELD_COST_MINUS_RATIO"),
+		entry("shield","FIGHT_PROP_SHIELD_COST_MINUS_RATIO"),
+		entry("damage","FIGHT_PROP_SUB_HURT"),
+		entry("dr","FIGHT_PROP_SUB_HURT"),
+		entry("dmgr","FIGHT_PROP_SUB_HURT"),
+		entry("dmgreduction","FIGHT_PROP_SUB_HURT"),
+		entry("damagereduction","FIGHT_PROP_SUB_HURT"),
+		entry("damager","FIGHT_PROP_SUB_HURT")
 	);
 	
 	//maps mainstat actual names to maps of id
@@ -86,18 +93,19 @@ public final class GiveArtCommand implements CommandHandler {
 		entry("def","FIGHT_PROP_DEFENSE"),
 		entry("def%","FIGHT_PROP_DEFENSE_PERCENT"),
 		entry("er","FIGHT_PROP_CHARGE_EFFICIENCY"),
-		entry("em","FIGHT_PROP_ELEMENTAL_MASTERY"),
+		entry("em","FIGHT_PROP_ELEMENT_MASTERY"),
 		entry("hb","FIGHT_PROP_HEAL_ADD"),
 		entry("cdmg","FIGHT_PROP_CRITICAL_HURT"),
+		entry("cd","FIGHT_PROP_CRITICAL_HURT"),
 		entry("cr","FIGHT_PROP_CRITICAL"),
-		entry("phys%","FIGHT_PROP_PHYSICAL_ADD_HURT"),
-		entry("dendro%","FIGHT_PROP_GRASS_ADD_HURT"),
-		entry("geo%","FIGHT_PROP_ROCK_ADD_HURT"),
-		entry("anemo%","FIGHT_PROP_WIND_ADD_HURT"),
-		entry("hydro%","FIGHT_PROP_WATER_ADD_HURT"),
-		entry("cryo%","FIGHT_PROP_ICE_ADD_HURT"),
-		entry("electro%","FIGHT_PROP_ELEC_ADD_HURT"),
-		entry("pyro%","FIGHT_PROP_FIRE_ADD_HURT")
+		entry("phys","FIGHT_PROP_PHYSICAL_ADD_HURT"),
+		entry("dendro","FIGHT_PROP_GRASS_ADD_HURT"),
+		entry("geo","FIGHT_PROP_ROCK_ADD_HURT"),
+		entry("anemo","FIGHT_PROP_WIND_ADD_HURT"),
+		entry("hydro","FIGHT_PROP_WATER_ADD_HURT"),
+		entry("cryo","FIGHT_PROP_ICE_ADD_HURT"),
+		entry("electro","FIGHT_PROP_ELEC_ADD_HURT"),
+		entry("pyro","FIGHT_PROP_FIRE_ADD_HURT")
 	);
 	
 	//gets mainstat from mainstat name to id map
@@ -172,10 +180,16 @@ public final class GiveArtCommand implements CommandHandler {
 		}
 		
 		
-		// satanise
+		// satanise or send usage
 		if (args.size() < 1) {
-			CommandHandler.sendMessage(sender,"All artifacts have a unique id of:\n[N1] [N2] [N3] [N4] [N5] 5numbers\n\n[N1][N2] -> ArtifactSet ID\n[N3]     -> 1/2/3/4/5 for [N3] star arti\n[N4]     ->       1/2/3/4/5\n        goblet/plume/circlet/flower/sands\n[N5]     -> number of substats 1-4(not needed as the stats are fixed later)\n\nSET IDs:\n20 -> Deepwood Memories\n21 -> Gilded Dreams\n71 -> Blizzard Strayer\n72 -> Thunder Soother\n73 -> Lavawalker\n74 -> Maiden's Beloved\n75 -> Gladiator's Finale\n76 -> Veridescent Venerer\n77 -> Wanderer's Troupe\n78 -> Glacier and Snoofield\n79 -> Thundering Fury\n80 -> Crimson Bitch Of Flames\n81 -> Noblesse Oblige\n82 -> Bloodstained Chilvary\n88 -> Archaic Petra\n89 -> Retracing Bolide\n90 -> Heart of Depth\n91 -> Tenacity of the Millelith\n92 -> Pale Flame\n93 -> Shimenawa's Reminiscence\n94 -> Emblem of Severed Fate\n95 -> Husk of Opulent Dreams\n96 -> Ocean's Hued Clam\n97 -> Vermillion Hereafter\n98 -> Echoes of the Offering\n99 -> UNKNOWN");
-			CommandHandler.sendMessage(sender, translate(sender, "/ga <artifactId> [<mainstatName>] [<substatName>=<substatvalue(in percent or flat)>] [<level 1 - 21>]"));
+			CommandHandler.sendMessage(sender,"All artifacts have a unique id of:\n[N1] [N2] [N3] [N4] [N5] 5numbers\n\n[N1][N2] -> ArtifactSet ID\n[N3]       -> 1/2/3/4/5 for [N3] star arti\n[N4]       ->       1/2/3/4/5\n        goblet/plume/circlet/flower/sands\n[N5]       -> number of substats 1-4(not needed as the stats are fixed later)\n\nSET IDs:\n20 -> Deepwood Memories\n21 -> Gilded Dreams\n71 -> Blizzard Strayer\n72 -> Thunder Soother\n73 -> Lavawalker\n74 -> Maiden's Beloved\n75 -> Gladiator's Finale\n76 -> Veridescent Venerer\n77 -> Wanderer's Troupe\n78 -> Glacier and Snoofield\n79 -> Thundering Fury\n80 -> Crimson Bitch Of Flames\n81 -> Noblesse Oblige\n82 -> Bloodstained Chilvary\n88 -> Archaic Petra\n89 -> Retracing Bolide\n90 -> Heart of Depth\n91 -> Tenacity of the Millelith\n92 -> Pale Flame\n93 -> Shimenawa's Reminiscence\n94 -> Emblem of Severed Fate\n95 -> Husk of Opulent Dreams\n96 -> Ocean's Hued Clam\n97 -> Vermillion Hereafter\n98 -> Echoes of the Offering\n99 -> UNKNOWN");
+			String availableMainstats = "[";
+			for (Map.Entry<String,String> entry : mainstatNameMap.entrySet()) {
+				availableMainstats = availableMainstats + entry.getKey() + ", ";
+			} availableMainstats += "]";
+			String availableSubstats = "[hp, healthpoint, healthpoints, hp%, hppercentage, atk, attack, atk%, attackpercent, attackpercentage, def, defense, defence, def%, defensepercent, defencepercent, defensepercentage, defencepercentage, er, energyrecharge, em, elementalmastery, cr, crate, critrate, criticalrate, cdmg, critdmg, critdamage, criticaldmg, criticaldamage, cd, cdr, cdreduction, cooldownreduction, phys, dendro, geo, anemo, hydro, cryo, electro, pyro, hb, speed, sb, shieldbonus, shield, dr, dmgr, dmgreduction, damagereduction, damager]";
+			CommandHandler.sendMessage(sender, "mainstats:\n" + availableMainstats + "\n\nsubstats:\n" + availableSubstats);
+			CommandHandler.sendMessage(sender, "/ga <artifactId> [<mainstatName>] [<substatName>=<substatvalue(in percent or flat)>] [<level 1 - 21>]");
 			return;
 		}
 
@@ -185,14 +199,14 @@ public final class GiveArtCommand implements CommandHandler {
 		try {
 			itemId = Integer.parseInt(args.remove(0)); //not an itemId at all
 		} catch (NumberFormatException ignored) {
-			CommandHandler.sendMessage(sender, translate(sender, "this itemId does not belong to an artifact"));
+			CommandHandler.sendMessage(sender, "this itemId does not belong to an artifact");
 			return;
 		}
 
 		ItemData itemData = GameData.getItemDataMap().get(itemId); //not an artifact
 		if (itemData != null) {
 			if (itemData.getItemType() != ItemType.ITEM_RELIQUARY) {
-				CommandHandler.sendMessage(sender, translate(sender, "this itemId does not belong to an artifact"));
+				CommandHandler.sendMessage(sender, "this itemId does not belong to an artifact");
 				return;
 			}
 		} else {
@@ -306,7 +320,7 @@ public final class GiveArtCommand implements CommandHandler {
 		//shows mainstat in string format
 		String finalMainstatInString = "NONE";
 		if (mainstatId != 0) {
-			GameData.getReliquaryMainPropDataMap().get(mainstatId).getFightProp().toString();
+			finalMainstatInString = GameData.getReliquaryMainPropDataMap().get(mainstatId).getFightProp().toString();
 		}
 		//calculates stats added
 		List<Map<Float,FightProperty>> finalSubstatsAdded = new ArrayList<Map<Float,FightProperty>>();

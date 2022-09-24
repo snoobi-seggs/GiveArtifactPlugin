@@ -13,20 +13,26 @@ its simple as frick to understand, almost impossible to screw up.
  -> `/ga [artifactId] [mainstatName] [substatName]=[substatValue] [level]` 
 
 	-> creates an artifact from the given details 
+	
+	-> (% are 1 - 100) so cdmg=7.8 is 7.8% of crit damage
 
 	-> eg `/ga 21543 hp% cr=23.4 cdmg=46.7 def=55 cdr=100 21`
 		-> `21543` => `Gilded Dreams Flower`  [required]
-		-> `hp%`    => `mainstat name`	          [not required]
-		-> `cr`        => `substat1 name`             [not required]
-		-> `23.4`    => `substat1 value`              [not required]
+		-> `hp%`   => `mainstat name`	      [not required]
+		-> `cr`    => `substat1 name`         [not required]
+		-> `23.4`  => `substat1 value`        [not required]
 		
 		-> `etc...`
 
-		-> `21`       => `artifact level (1-21)`     [not required, defaut is max]
+		-> `21`    => `artifact level (1-21)` [not required, defaut is max]
 
  -> `godset function not available yet`
 
+### Download
 
+ -> Proceed to `Releases` and download `GiveArtifactPlugMyAss.jar`
+ 
+ -> Place this jar file in ur plugins folder for gc
 
 
 

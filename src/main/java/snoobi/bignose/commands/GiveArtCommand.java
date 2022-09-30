@@ -323,8 +323,9 @@ public final class GiveArtCommand implements CommandHandler {
 			finalMainstatInString = GameData.getReliquaryMainPropDataMap().get(mainstatId).getFightProp().toString();
 		}
 		//calculates stats added
-		List<Map<Float,FightProperty>> finalSubstatsAdded = new ArrayList<Map<Float,FightProperty>>();
+		List<Map<String,FightProperty>> finalSubstatsAdded = new ArrayList<Map<String,FightProperty>>();
 		Float tempTotal = 0f;
+		String finalTotal = "";
 		int previousSubstatId = 0;
 		if (substatIdList.size() != 0) {  // check if substats are even available
 			FightProperty currentStatBeforeSwitch = GameData.getReliquaryAffixDataMap().get(substatIdList.get(0)).getFightProp();
@@ -333,8 +334,13 @@ public final class GiveArtCommand implements CommandHandler {
 					tempTotal = tempTotal + GameData.getReliquaryAffixDataMap().get(substatId).getPropValue();
 					previousSubstatId = substatId;
 				} else {
-					Map<Float,FightProperty> tempMap = new HashMap<>();
-					tempMap.put(tempTotal,GameData.getReliquaryAffixDataMap().get(previousSubstatId).getFightProp());
+					Map<String,FightProperty> tempMap = new HashMap<>();
+					if (GameData.getReliquaryAffixDataMap().get(previousSubstatId).getFightProp().equals(FightProperty.FIGHT_PROP_ATTACK) || GameData.getReliquaryAffixDataMap().get(previousSubstatId).getFightProp().equals(FightProperty.FIGHT_PROP_HP) || GameData.getReliquaryAffixDataMap().get(previousSubstatId).getFightProp().equals(FightProperty.FIGHT_PROP_DEFENSE) || GameData.getReliquaryAffixDataMap().get(previousSubstatId).getFightProp().equals(FightProperty.FIGHT_PROP_ELEMENT_MASTERY)) {
+						finalTotal = String.valueOf(tempTotal); // no need x100
+					} else {
+						finalTotal = String.valueOf(tempTotal*100) + "%";
+					}
+					tempMap.put(finalTotal,GameData.getReliquaryAffixDataMap().get(previousSubstatId).getFightProp());
 					finalSubstatsAdded.add(tempMap);
 					tempTotal = 0f;
 					tempTotal = tempTotal + GameData.getReliquaryAffixDataMap().get(substatId).getPropValue();
@@ -343,8 +349,13 @@ public final class GiveArtCommand implements CommandHandler {
 				}
 			}
 			// final appended
-			Map<Float,FightProperty> tempMap = new HashMap<>();
-			tempMap.put(tempTotal,GameData.getReliquaryAffixDataMap().get(previousSubstatId).getFightProp());
+			Map<String,FightProperty> tempMap = new HashMap<>();
+			if (GameData.getReliquaryAffixDataMap().get(previousSubstatId).getFightProp().equals(FightProperty.FIGHT_PROP_ATTACK) || GameData.getReliquaryAffixDataMap().get(previousSubstatId).getFightProp().equals(FightProperty.FIGHT_PROP_HP) || GameData.getReliquaryAffixDataMap().get(previousSubstatId).getFightProp().equals(FightProperty.FIGHT_PROP_DEFENSE) || GameData.getReliquaryAffixDataMap().get(previousSubstatId).getFightProp().equals(FightProperty.FIGHT_PROP_ELEMENT_MASTERY)) {
+				finalTotal = String.valueOf(tempTotal); // no need x100
+			} else {
+				finalTotal = String.valueOf(tempTotal*100) + "%";
+			}
+			tempMap.put(finalTotal,GameData.getReliquaryAffixDataMap().get(previousSubstatId).getFightProp());
 			finalSubstatsAdded.add(tempMap);
 			tempTotal = 0f;
 			tempTotal = tempTotal + GameData.getReliquaryAffixDataMap().get(previousSubstatId).getPropValue();
@@ -353,14 +364,40 @@ public final class GiveArtCommand implements CommandHandler {
 
 
 		String finalStatsInString = "";
-		for (Map<Float,FightProperty> map : finalSubstatsAdded) {
+		for (Map<String,FightProperty> map : finalSubstatsAdded) {
 			finalStatsInString = finalStatsInString + map.entrySet().iterator().next().getValue() + " : " + map.entrySet().iterator().next().getKey() + "\n";
 		}
 		if (finalStatsInString.equals("")) {
 			finalStatsInString = "NONE";
 		}
 
-		CommandHandler.sendMessage(sender, "The artifact has been added to your inventory!\n\nArtifact ID : " + Integer.toString(itemId) + "\nTarget Player : @" + Integer.toString(targetPlayer.getUid()) + "\n\nMainstat:\n" + finalMainstatInString + "\n\nSubstats:\n" + finalStatsInString + "\n\nLevel : " + String.valueOf(level));
+		//handles actual give command for future usage?
+		String giveCommandArgs = "/g ";
+		giveCommandArgs += String.valueOf(item.getItemId()) + " " + String.valueOf(mainstatId) + " ";
+		int tempRollCount = 1;
+		if (substatIdList.size() > 0) {
+			for (int i = 0 ; i < substatIdList.size() - 1; i++) {
+				if (substatIdList.get(i+1).equals(substatIdList.get(i))) {
+					tempRollCount += 1;
+				} else {
+					giveCommandArgs += String.valueOf(substatIdList.get(i)) + "," + String.valueOf(tempRollCount) + " ";
+					tempRollCount = 1;
+				}
+			}
+			// handle last element
+			if (substatIdList.get(substatIdList.size()-2).equals(substatIdList.get(substatIdList.size()-1))) {
+				tempRollCount += 1;
+				giveCommandArgs += String.valueOf(substatIdList.get(substatIdList.size()-1)) + "," + String.valueOf(tempRollCount) + " " + String.valueOf(level);
+				tempRollCount = 1;
+			} else {
+				tempRollCount = 1;
+				giveCommandArgs += String.valueOf(substatIdList.get(substatIdList.size()-1)) + "," + String.valueOf(tempRollCount) + " " + String.valueOf(level);
+			}
+		} else {
+			giveCommandArgs += String.valueOf(level);
+		}
+
+		CommandHandler.sendMessage(sender, "The artifact has been added to your inventory!\n\nArtifact ID : " + Integer.toString(itemId) + "\nTarget Player : @" + Integer.toString(targetPlayer.getUid()) + "\n\nMainstat:\n" + finalMainstatInString + "\n\nSubstats:\n" + finalStatsInString + "\nLevel : " + String.valueOf(level) + "\n\n\nIf you wanted use normal give command, this would be your input\n" + giveCommandArgs);
 	}
 }
 

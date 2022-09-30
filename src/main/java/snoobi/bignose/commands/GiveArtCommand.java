@@ -46,7 +46,7 @@ public final class GiveArtCommand implements CommandHandler {
 		entry("er", "FIGHT_PROP_CHARGE_EFFICIENCY"),
 		entry("energyrecharge","FIGHT_PROP_CHARGE_EFFICIENCY"),
 		entry("em", "FIGHT_PROP_ELEMENT_MASTERY"),
-		entry("elementalmastery","FIGHT_PROP_ELEMENTAL_MASTERY"),
+		entry("elementalmastery","FIGHT_PROP_ELEMENT_MASTERY"),
 		entry("cr", "FIGHT_PROP_CRITICAL"),
 		entry("crate","FIGHT_PROP_CRITICAL"),
 		entry("critrate","FIGHT_PROP_CRITICAL"),
@@ -276,7 +276,7 @@ public final class GiveArtCommand implements CommandHandler {
 					}
 					//makes sure that % arent 100 times of what it shld be [hp,atk,def,em]
 					if (Float.parseFloat(arr[1]) > 0) { 
-						if (substatNameMap.get(substatName).equals("FIGHT_PROP_HP") || substatNameMap.get(substatName).equals("FIGHT_PROP_DEFENSE") || substatNameMap.get(substatName).equals("FIGHT_PROP_ATTACK") || substatNameMap.get(substatName).equals("FIGHT_PROP_ELEMENTAL_MASTERY")) {  // dont need to divide 100, the rest of stats are all in %
+						if (substatNameMap.get(substatName).equals("FIGHT_PROP_HP") || substatNameMap.get(substatName).equals("FIGHT_PROP_DEFENSE") || substatNameMap.get(substatName).equals("FIGHT_PROP_ATTACK") || substatNameMap.get(substatName).equals("FIGHT_PROP_ELEMENT_MASTERY")) {  // dont need to divide 100, the rest of stats are all in %
 							remainder = arr[1];
 						} else {
 							remainder = String.valueOf( (Float.parseFloat(arr[1]) + 0.1f) / 100);

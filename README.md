@@ -28,6 +28,8 @@ its simple as frick to understand, almost impossible to screw up.
 
  -> `godset function not available yet`
 
+-> DO NOT USE WITH TAMILPP RESOURCES FOR NOW AS THE AFFIX STATS ARE OUTDATED
+
 ### Download
 
  -> Proceed to `Releases` and download `GiveArtifactPlugMyAss.jar`
